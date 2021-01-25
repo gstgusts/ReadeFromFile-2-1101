@@ -1,6 +1,9 @@
 package com.company;
 
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -20,6 +23,33 @@ public class FileReader {
         return sb.toString();
     }
 
+    public List<String> getTextLinesOfSmallFile(String fileName) {
+        Path path = Paths.get(fileName);
+        try {
+            return Files.readAllLines(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<>();
+    }
+
+    public String getFileContentUsingDataInputStream(String fileName) {
+        try {
+            DataInputStream reader = new DataInputStream(new FileInputStream(fileName));
+            int nBytesTotal = reader.available();
+            if (nBytesTotal > 0) {
+              byte[] bytes = new byte[nBytesTotal];
+              reader.read(bytes);
+              return new String(bytes);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
     public List<String> getAllLines(String fileName) {
         var stream = getInputStream(fileName);
 
@@ -37,5 +67,10 @@ public class FileReader {
     private InputStream getInputStream(String fileName) {
         Class app = Main.class;
         return app.getResourceAsStream(fileName);
+    }
+
+    private File getFile(String fileName) {
+        Class app = Main.class;
+        return new File(app.getResource(fileName).getFile());
     }
 }
